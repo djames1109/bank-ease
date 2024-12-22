@@ -1,1 +1,3 @@
 rootProject.name = 'bank-ease'
+
+include 'services:user-service'
