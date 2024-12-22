@@ -49,7 +49,10 @@ public class UserController {
      */
     @GetMapping("/{username}")
     public ResponseEntity<UserResponse> getUserByUsername(@PathVariable String username) {
-        return null;
+        log.info("Retrieving user by username: {}", username);
+        var response = userService.getUserByUsername(username);
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{username}")
