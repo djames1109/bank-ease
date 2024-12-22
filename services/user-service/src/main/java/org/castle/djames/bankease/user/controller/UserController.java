@@ -1,7 +1,9 @@
 package org.castle.djames.bankease.user.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.castle.djames.bankease.user.dto.RegisterUserRequest;
 import org.castle.djames.bankease.user.dto.UserResponse;
 import org.castle.djames.bankease.user.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +19,20 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * Registers a new user based on the provided request data.
+     *
+     * @param request the {@link RegisterUserRequest} containing user details such as username, password, email,
+     *                first name, last name, and role
+     * @return a {@link ResponseEntity} containing the {@link UserResponse} with the details of the newly registered user
+     */
     @PostMapping
-    public ResponseEntity<UserResponse> registerUser() {
+    public ResponseEntity<UserResponse> registerUser(@RequestBody @Valid RegisterUserRequest request) {
+        log.info("Registering user: {}", request);
+        var response = userService.registerUser(request);
+        log.info("Register user response: {}", response);
 
-        return null;
+        return ResponseEntity.ok(response);
     }
 
     // todo: must be paginated and be able to sort and filter by status, date created, first name, lastname, username, email and role
