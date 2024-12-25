@@ -3,12 +3,18 @@ package org.castle.djames.bankease.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.castle.djames.bankease.user.dto.RegisterUserRequest;
+import org.castle.djames.bankease.user.dto.UpdateUserRequest;
 import org.castle.djames.bankease.user.dto.UserResponse;
+import org.castle.djames.bankease.user.entity.Role;
 import org.castle.djames.bankease.user.entity.User;
 import org.castle.djames.bankease.user.exception.UserNotFoundException;
 import org.castle.djames.bankease.user.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+import java.util.function.Consumer;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,11 +31,28 @@ public class UserService {
         return mapToUserResponse(savedUser);
     }
 
+    @Transactional
+    public UserResponse updateUserByUsername(String username, UpdateUserRequest request) {
+        log.info("Updating user details: {}", username);
+
+        var existingUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with username '%s' not found", username)));
+
+        updateIfExisting(existingUser::setEmail, request.email());
+        updateIfExisting(existingUser::setFirstName, request.firstName());
+        updateIfExisting(existingUser::setLastName, request.lastName());
+        updateIfExisting(existingUser::setRole, request.role());
+        updateIfExisting(existingUser::setActive, request.active());
+
+        return mapToUserResponse(existingUser);
+    }
+
     public UserResponse getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .map(this::mapToUserResponse)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User '%s' not found", username)));
     }
+
 
     //    ===============>>>>> HELPER METHODS <<<<<====================
     private User buildUser(RegisterUserRequest request) {
@@ -52,5 +75,17 @@ public class UserService {
                 .role(user.getRole())
                 .isActive(user.isActive())
                 .build();
+    }
+
+    private void updateIfExisting(Consumer<String> expression, String value) {
+        Optional.of(value).ifPresent(expression);
+    }
+
+    private void updateIfExisting(Consumer<Role> expression, Role value) {
+        Optional.of(value).ifPresent(expression);
+    }
+
+    private void updateIfExisting(Consumer<Boolean> expression, Boolean value) {
+        Optional.of(value).ifPresent(expression);
     }
 }

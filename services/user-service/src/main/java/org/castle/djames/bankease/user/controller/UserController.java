@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.castle.djames.bankease.user.dto.RegisterUserRequest;
+import org.castle.djames.bankease.user.dto.UpdateUserRequest;
 import org.castle.djames.bankease.user.dto.UserResponse;
 import org.castle.djames.bankease.user.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -56,12 +57,18 @@ public class UserController {
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<UserResponse> updateUserByUsername(@PathVariable String username) {
-        return null;
+    public ResponseEntity<UserResponse> updateUserByUsername(@PathVariable String username,
+                                                             @RequestBody @Valid UpdateUserRequest request) {
+        log.info("Updating user by username: {}, {}", username, request);
+        var response = userService.updateUserByUsername(username, request);
+        log.info("Update user response: {}", response);
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{username}")
-    public ResponseEntity<UserResponse> deleteUserByUsername(@PathVariable String username) {
+    public ResponseEntity<Void> deleteUserByUsername(@PathVariable String username) {
+        
         return null;
     }
 
