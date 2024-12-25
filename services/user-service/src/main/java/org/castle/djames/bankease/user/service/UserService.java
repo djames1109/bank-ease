@@ -31,12 +31,15 @@ public class UserService {
         return mapToUserResponse(savedUser);
     }
 
+    public UserResponse getUserByUsername(String username) {
+        return mapToUserResponse(getExistingUserByUsername(username));
+    }
+
     @Transactional
     public UserResponse updateUserByUsername(String username, UpdateUserRequest request) {
         log.info("Updating user details: {}", username);
 
-        var existingUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User with username '%s' not found", username)));
+        var existingUser = getExistingUserByUsername(username);
 
         updateIfExisting(existingUser::setEmail, request.email());
         updateIfExisting(existingUser::setFirstName, request.firstName());
@@ -47,14 +50,18 @@ public class UserService {
         return mapToUserResponse(existingUser);
     }
 
-    public UserResponse getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .map(this::mapToUserResponse)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User '%s' not found", username)));
+    @Transactional
+    public void deleteUserByUsername(String username) {
+        log.info("Deleting user: {}", username);
+        var existingUser = getExistingUserByUsername(username);
+        userRepository.delete(existingUser);
     }
 
-
     //    ===============>>>>> HELPER METHODS <<<<<====================
+    private User getExistingUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with username '%s' not found", username)));
+    }
     private User buildUser(RegisterUserRequest request) {
         return User.builder()
                 .firstName(request.firstName())
