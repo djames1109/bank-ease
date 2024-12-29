@@ -6,11 +6,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.castle.djames.bankease.user.dto.RegisterUserRequest;
 import org.castle.djames.bankease.user.dto.UpdateUserRequest;
 import org.castle.djames.bankease.user.dto.UserResponse;
+import org.castle.djames.bankease.user.entity.User;
+import org.castle.djames.bankease.user.repository.UserRepository;
 import org.castle.djames.bankease.user.service.UserService;
+import org.castle.djames.bankease.user.specification.SearchOperation;
+import org.castle.djames.bankease.user.specification.UserSpecificationsBuilder;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -18,6 +27,7 @@ import java.util.List;
 @RestController
 public class UserController {
 
+    private final UserRepository repo;
     private final UserService userService;
 
     /**
@@ -36,10 +46,27 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // todo: must be paginated and be able to sort and filter by status, date created, first name, lastname, username, email and role
-    @GetMapping
-    public ResponseEntity<List<UserResponse>> getListOfUsers() {
-        return null;
+    @GetMapping("/search")
+    public ResponseEntity<List<User>> getListOfUsers(@RequestParam(value = "search") String search) {
+        log.info("Searching users with search parameters: {}", search);
+        Specification<User> spec = resolveSpecification(search);
+        var response = repo.findAll(spec);
+        log.info("Search users response: {}", response);
+
+
+        return ResponseEntity.ok(response);
+    }
+
+    protected Specification<User> resolveSpecification(String searchParameters) {
+
+        UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
+        String operationSetExper = String.join("|", SearchOperation.SIMPLE_OPERATION_SET);
+        Pattern pattern = Pattern.compile("(\\p{Punct}?)(\\w+?)(" + operationSetExper + ")(\\p{Punct}?)(\\w+?)(\\p{Punct}?),");
+        Matcher matcher = pattern.matcher(searchParameters + ",");
+        while (matcher.find()) {
+            builder.with(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(5), matcher.group(4), matcher.group(6));
+        }
+        return builder.build();
     }
 
     /**
