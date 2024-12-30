@@ -11,6 +11,7 @@ import org.castle.djames.bankease.user.exception.UserNotFoundException;
 import org.castle.djames.bankease.user.repository.UserRepository;
 import org.castle.djames.bankease.user.specification.SearchOperation;
 import org.castle.djames.bankease.user.specification.UserSpecificationsBuilder;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,9 +42,9 @@ public class UserService {
         return mapToUserResponse(getExistingUserByUsername(username));
     }
 
-    public List<UserResponse> search(String searchParam) {
+    public List<UserResponse> search(String searchParam, Pageable pageRequest) {
         Specification<User> spec = resolveSearchSpecification(searchParam);
-        var response = userRepository.findAll(spec);
+        var response = userRepository.findAll(spec, pageRequest);
 
         return response.stream().map(this::mapToUserResponse).toList();
     }

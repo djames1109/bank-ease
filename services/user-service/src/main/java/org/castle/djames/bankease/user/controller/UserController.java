@@ -7,6 +7,7 @@ import org.castle.djames.bankease.user.dto.RegisterUserRequest;
 import org.castle.djames.bankease.user.dto.UpdateUserRequest;
 import org.castle.djames.bankease.user.dto.UserResponse;
 import org.castle.djames.bankease.user.service.UserService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,11 +44,11 @@ public class UserController {
      * @return a {@link ResponseEntity} containing a list of {@link UserResponse} that matches the search criteria
      */
     @GetMapping
-    public ResponseEntity<List<UserResponse>> searchUser(@RequestParam(value = "search") String search) {
+    public ResponseEntity<List<UserResponse>> searchUsers(@RequestParam(value = "search") String search, Pageable pageRequest) {
         log.info("Searching users with search parameters: {}", search);
-        var response = userService.search(search);
+        var response = userService.search(search, pageRequest);
         log.info("Search users response: {}", response);
-    
+
         return ResponseEntity.ok(response);
     }
 
@@ -78,7 +79,7 @@ public class UserController {
         log.info("Updating user by username: {}, {}", username, request);
         var response = userService.updateUserByUsername(username, request);
         log.info("Update user response: {}", response);
-    
+
         return ResponseEntity.ok(response);
     }
 
