@@ -80,12 +80,12 @@ public class UserService {
      * Resolves and builds a search specification based on input parameters.
      * This method parses the provided search parameters using a regular expression
      * to extract conditions such as field, operator, and value. The extracted
-     * conditions are then used to build a Specification<User> via the 
+     * conditions are then used to build a Specification<User> via the
      * UserSpecificationsBuilder.
-     * <p> 
-     * You can also specify an `orPredicate` by prefixing the key with a single 
+     * <p>
+     * You can also specify an `orPredicate` by prefixing the key with a single
      * quote (`'`). For example: "'username:john,email:john@domain.com," would
-     * treat "username" as an OR condition while combining it with the rest of 
+     * treat "username" as an OR condition while combining it with the rest of
      * the criteria.
      * <p>
      * Additionally, you can add `*` before or after the value to indicate a wildcard search.
