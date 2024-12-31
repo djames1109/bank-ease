@@ -18,5 +18,7 @@ create table if not exists bank_ease_schema.user (
     created_date_time timestamp not null,
     last_updated_date_time timestamp not null,
     version int not null,
-    constraint user_pk primary key (id)
+    constraint user_pk primary key (id),
+    constraint user_unique_username unique(username),
+    constraint user_unique_email unique(email)
 );
