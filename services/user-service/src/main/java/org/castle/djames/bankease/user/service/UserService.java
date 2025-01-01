@@ -131,14 +131,14 @@ public class UserService {
     }
 
     private void updateIfExisting(Consumer<String> expression, String value) {
-        Optional.of(value).ifPresent(expression);
+        Optional.ofNullable(value).ifPresent(expression);
     }
 
     private void updateIfExisting(Consumer<Role> expression, Role value) {
-        Optional.of(value).ifPresent(expression);
+        Optional.ofNullable(value).ifPresent(expression);
     }
 
     private void updateIfExisting(Consumer<Boolean> expression, Boolean value) {
-        Optional.of(value).ifPresent(expression);
+        Optional.ofNullable(value).ifPresent(expression);
     }
 }

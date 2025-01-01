@@ -1,6 +1,7 @@
 package org.castle.djames.bankease.user.service;
 
 import org.castle.djames.bankease.user.dto.RegisterUserRequest;
+import org.castle.djames.bankease.user.dto.UpdateUserRequest;
 import org.castle.djames.bankease.user.entity.Role;
 import org.castle.djames.bankease.user.entity.User;
 import org.castle.djames.bankease.user.repository.UserRepository;
@@ -82,11 +83,6 @@ class UserServiceTest {
         assertThat(results).hasSize(1);
         assertThat(results.get(0).getUsername()).isEqualTo("username");
         verify(userRepository).findAll(Mockito.any(Specification.class), Mockito.any(Pageable.class));
-    }
-
-    @Test
-    void updateUserByUsername() {
-
     }
 
     @Test
