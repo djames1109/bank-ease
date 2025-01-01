@@ -85,10 +85,6 @@ class UserServiceTest {
         verify(userRepository).findAll(Mockito.any(Specification.class), Mockito.any(Pageable.class));
     }
 
-    @Test
-    void deleteUserByUsername() {
-    }
-
     private User mockUser() {
         return User.builder()
                 .username("username")
