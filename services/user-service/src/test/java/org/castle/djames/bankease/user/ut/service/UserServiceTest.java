@@ -1,4 +1,4 @@
-package org.castle.djames.bankease.user.service;
+package org.castle.djames.bankease.user.ut.service;
 
 import org.castle.djames.bankease.user.dto.RegisterUserRequest;
 import org.castle.djames.bankease.user.dto.UpdateUserRequest;
