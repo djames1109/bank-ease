@@ -3,6 +3,7 @@ package org.castle.djames.bankease.user.it;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.castle.djames.bankease.user.dto.RegisterUserRequest;
+import org.castle.djames.bankease.user.dto.UpdateUserRequest;
 import org.castle.djames.bankease.user.dto.UserResponse;
 import org.castle.djames.bankease.user.entity.Role;
 import org.castle.djames.bankease.user.entity.User;
@@ -16,9 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -107,12 +106,24 @@ class UserIntegrationTest {
     }
 
     @Test
-    void shouldFailToFetchUserDetailsWithInvalidId() {
+    void updateUserByUsername_shouldUpdateUserDetailsSuccessfully() {
+        saveNewUser();
 
-    }
+        var body = new UpdateUserRequest(null, "johndoe2@gmail.com", null, null, null, null);
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        var request = new HttpEntity<>(body, headers);
 
-    @Test
-    void shouldUpdateUserDetailsSuccessfully() {
+        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.PUT, request, UserResponse.class);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(response.getBody()).isNotNull();
+        Assertions.assertThat(response.getBody().getUsername()).isEqualTo("johndoe");
+        Assertions.assertThat(response.getBody().getEmail()).isEqualTo("johndoe2@gmail.com");
+        Assertions.assertThat(response.getBody().getFirstName()).isEqualTo("John");
+        Assertions.assertThat(response.getBody().getLastName()).isEqualTo("Doe");
+        Assertions.assertThat(response.getBody().getRole()).isEqualTo(Role.USER);
+        Assertions.assertThat(response.getBody().isActive()).isTrue();
 
     }
 
@@ -147,7 +158,6 @@ class UserIntegrationTest {
                 .role(Role.USER)
                 .build();
     }
-
 
 
 }
