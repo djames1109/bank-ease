@@ -128,8 +128,17 @@ class UserIntegrationTest {
     }
 
     @Test
-    void shouldFailToUpdateUserDetailsWithInvalidData() {
+    void updateUserByUsername_shouldFailToUpdateUserDetailsWithInvalidData() {
+        saveNewUser();
 
+        var body = new UpdateUserRequest(null, "testEmail", null, null, null, null);
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        var request = new HttpEntity<>(body, headers);
+
+        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.PUT, request, UserResponse.class);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
