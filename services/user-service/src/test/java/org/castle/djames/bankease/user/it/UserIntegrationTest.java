@@ -48,13 +48,13 @@ class UserIntegrationTest {
 
     @Test
     void testRegisterUser_shouldCreateUserSuccessfully() {
-        var request = new RegisterUserRequest("johndoe", "password", "<EMAIL>", "John", "Doe", Role.USER);
+        var request = new RegisterUserRequest("johndoe", "password", "johndoe@domain.com", "John", "Doe", Role.USER);
 
         ResponseEntity<UserResponse> response = testRestTemplate.postForEntity("/v1/users", request, UserResponse.class);
         log.info("Response: {}", response);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        
+
     }
 
     @Test
