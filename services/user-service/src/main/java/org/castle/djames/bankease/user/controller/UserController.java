@@ -43,7 +43,7 @@ public class UserController {
      * @param search the search term used to filter users, such as username, email, or name
      * @return a {@link ResponseEntity} containing a list of {@link UserResponse} that matches the search criteria
      */
-    @GetMapping
+    @GetMapping(produces = "application/json")
     public ResponseEntity<List<UserResponse>> searchUsers(@RequestParam(value = "search") String search, Pageable pageRequest) {
         log.info("Searching users with search parameters: {}", search);
         var response = userService.search(search, pageRequest);
