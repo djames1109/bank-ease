@@ -1,10 +1,10 @@
 package org.castle.djames.bankease.user.ut.service;
 
 import org.castle.djames.bankease.user.dto.RegisterUserRequest;
-import org.castle.djames.bankease.user.dto.UpdateUserRequest;
 import org.castle.djames.bankease.user.entity.Role;
 import org.castle.djames.bankease.user.entity.User;
 import org.castle.djames.bankease.user.repository.UserRepository;
+import org.castle.djames.bankease.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -14,6 +14,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "user", schema = "bank_ease_schema")
 @Entity
 public class User {
 

@@ -1,16 +1,26 @@
 package org.castle.djames.bankease.user.it;
 
+import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
+import org.castle.djames.bankease.user.dto.RegisterUserRequest;
+import org.castle.djames.bankease.user.dto.UserResponse;
+import org.castle.djames.bankease.user.entity.Role;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Duration;
 
+@Slf4j
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserIntegrationTest {
@@ -20,6 +30,9 @@ class UserIntegrationTest {
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:alpine3.19")
             .withStartupTimeout(Duration.ofSeconds(90))
             .withInitScript("init.sql");
+
+    @Autowired
+    private TestRestTemplate testRestTemplate;
 
     @BeforeAll
     static void setupClass() {
@@ -34,8 +47,14 @@ class UserIntegrationTest {
 //    ============>>>>> TESTS <<<<<=============
 
     @Test
-    void shouldCreateUserSuccessfully() {
-        // TODO: Implement test: Create a user with valid data and assert success
+    void testRegisterUser_shouldCreateUserSuccessfully() {
+        var request = new RegisterUserRequest("johndoe", "password", "<EMAIL>", "John", "Doe", Role.USER);
+
+        ResponseEntity<UserResponse> response = testRestTemplate.postForEntity("/v1/users", request, UserResponse.class);
+        log.info("Response: {}", response);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        
     }
 
     @Test
@@ -72,8 +91,6 @@ class UserIntegrationTest {
     void shouldFailToDeleteUserWithInvalidId() {
         // TODO: Implement test: Attempt deleting a user with an invalid ID and assert failure
     }
-
-
 
 
 }
