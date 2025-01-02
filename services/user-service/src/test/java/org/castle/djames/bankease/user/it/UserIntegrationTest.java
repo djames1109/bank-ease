@@ -86,6 +86,23 @@ class UserIntegrationTest {
     }
 
     @Test
+    void testGetUserByUsername_shouldFetchUserDetailsSuccessfully() {
+        saveNewUser();
+
+        var response = testRestTemplate.getForEntity("/v1/users/johndoe", UserResponse.class);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(response.getBody()).isNotNull();
+        Assertions.assertThat(response.getBody().getUsername()).isEqualTo("johndoe");
+        Assertions.assertThat(response.getBody().getEmail()).isEqualTo("johndoe@domain.com");
+        Assertions.assertThat(response.getBody().getFirstName()).isEqualTo("John");
+        Assertions.assertThat(response.getBody().getLastName()).isEqualTo("Doe");
+        Assertions.assertThat(response.getBody().getRole()).isEqualTo(Role.USER);
+        Assertions.assertThat(response.getBody().isActive()).isTrue();
+    }
+
+
+    @Test
     void testSearchUsers_shouldFetchUserDetailsSuccessfully() {
         saveNewUser();
 
@@ -143,6 +160,7 @@ class UserIntegrationTest {
 
     @Test
     void shouldDeleteUserSuccessfully() {
+        saveNewUser();
 
     }
 
