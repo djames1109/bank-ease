@@ -64,7 +64,11 @@ class UserIntegrationTest {
 
     @Test
     void shouldFailToCreateUserWithInvalidData() {
+        var request = new RegisterUserRequest("johndoe", "password", "johndoe", "John", "Doe", Role.USER);
 
+        ResponseEntity<UserResponse> response = testRestTemplate.postForEntity("/v1/users", request, UserResponse.class);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
