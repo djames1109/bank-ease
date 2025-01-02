@@ -49,47 +49,52 @@ class UserIntegrationTest {
     @Test
     void testRegisterUser_shouldCreateUserSuccessfully() {
         var request = new RegisterUserRequest("johndoe", "password", "johndoe@domain.com", "John", "Doe", Role.USER);
-
+    
         ResponseEntity<UserResponse> response = testRestTemplate.postForEntity("/v1/users", request, UserResponse.class);
-        log.info("Response: {}", response);
-
+    
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
+        UserResponse userResponse = response.getBody();
+        Assertions.assertThat(userResponse).isNotNull();
+        Assertions.assertThat(userResponse.getUsername()).isEqualTo("johndoe");
+        Assertions.assertThat(userResponse.getEmail()).isEqualTo("johndoe@domain.com");
+        Assertions.assertThat(userResponse.getFirstName()).isEqualTo("John");
+        Assertions.assertThat(userResponse.getLastName()).isEqualTo("Doe");
+        Assertions.assertThat(userResponse.getRole()).isEqualTo(Role.USER);
     }
 
     @Test
     void shouldFailToCreateUserWithInvalidData() {
-        // TODO: Implement test: Attempt creating a user with invalid data and assert failure
+
     }
 
     @Test
     void shouldFetchUserDetailsSuccessfully() {
-        // TODO: Implement test: Fetch user details using a valid user ID and assert correctness
+
     }
 
     @Test
     void shouldFailToFetchUserDetailsWithInvalidId() {
-        // TODO: Implement test: Attempt fetching user details with an invalid ID and assert failure
+
     }
 
     @Test
     void shouldUpdateUserDetailsSuccessfully() {
-        // TODO: Implement test: Update user details with valid data and assert success
+
     }
 
     @Test
     void shouldFailToUpdateUserDetailsWithInvalidData() {
-        // TODO: Implement test: Attempt updating user details with invalid data and assert failure
+
     }
 
     @Test
     void shouldDeleteUserSuccessfully() {
-        // TODO: Implement test: Delete a user with a valid user ID and assert success
+
     }
 
     @Test
     void shouldFailToDeleteUserWithInvalidId() {
-        // TODO: Implement test: Attempt deleting a user with an invalid ID and assert failure
+
     }
 
 
