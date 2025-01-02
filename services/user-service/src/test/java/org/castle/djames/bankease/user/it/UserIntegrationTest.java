@@ -162,11 +162,18 @@ class UserIntegrationTest {
     void shouldDeleteUserSuccessfully() {
         saveNewUser();
 
-    }
+//        verify if user is existing
+        var savedUser = testRestTemplate.getForEntity("/v1/users/johndoe", UserResponse.class);
+        Assertions.assertThat(savedUser.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(savedUser.getBody()).isNotNull();
+        Assertions.assertThat(savedUser.getBody().getUsername()).isEqualTo("johndoe");
 
-    @Test
-    void shouldFailToDeleteUserWithInvalidId() {
+        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.DELETE, null, String.class);
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
+//        verify if user is deleted
+//        var deletedUser = testRestTemplate.getForEntity("/v1/users/johndoe", UserResponse.class);
+//        Assertions.assertThat(deletedUser.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     private User saveNewUser() {
