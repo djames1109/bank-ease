@@ -5,11 +5,12 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class Response {
+public class Response<T> {
 
     private ResponseStatus status;
     private String code;
     private String message;
+    private T body;
     private List<ErrorDetail> errorDetails;
 
 }
