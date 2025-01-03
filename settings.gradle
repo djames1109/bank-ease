@@ -1,3 +1,4 @@
 rootProject.name = 'bank-ease'
 
 include 'services:user-service'
+include 'components:common'
