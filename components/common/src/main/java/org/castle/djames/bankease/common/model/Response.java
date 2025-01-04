@@ -18,10 +18,7 @@ public class Response<T> {
 
     public Response<T> addError(ErrorDetail errorDetail) {
         if (this.errorDetails == null) {
-            var errorList = new ArrayList<ErrorDetail>();
-            errorList.add(errorDetail);
-            this.errorDetails = errorList;
-            return this;
+            this.errorDetails = new ArrayList<>();
         }
 
         this.errorDetails.add(errorDetail);
@@ -30,10 +27,7 @@ public class Response<T> {
 
     public Response<T> addError(String code, String message) {
         if (this.errorDetails == null) {
-            var errorList = new ArrayList<ErrorDetail>();
-            errorList.add(new ErrorDetail(code, message));
-            this.errorDetails = errorList;
-            return this;
+            this.errorDetails = new ArrayList<>();
         }
 
         this.errorDetails.add(new ErrorDetail(code, message));
