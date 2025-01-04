@@ -30,7 +30,7 @@ public class UserController {
      *                first name, last name, and role
      * @return a {@link ResponseEntity} containing the {@link UserResponse} with the details of the newly registered user
      */
-    @PostMapping
+    @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<Response<UserResponse>> registerUser(@RequestBody @Valid RegisterUserRequest request) {
         log.info("Registering user: {}", request);
         var body = userService.registerUser(request);
@@ -61,7 +61,7 @@ public class UserController {
      * @param username the username of the user to be retrieved
      * @return a ResponseEntity containing the UserResponse of the user if found
      */
-    @GetMapping("/{username}")
+    @GetMapping(value = "/{username}", produces = "application/json")
     public ResponseEntity<UserResponse> getUserByUsername(@PathVariable String username) {
         log.info("Retrieving user by username: {}", username);
         var response = userService.getUserByUsername(username);
@@ -76,7 +76,7 @@ public class UserController {
      * @param request  the {@link UpdateUserRequest} containing updated details of the user
      * @return a {@link ResponseEntity} containing the updated {@link UserResponse} of the user
      */
-    @PutMapping("/{username}")
+    @PutMapping(value = "/{username}", consumes = "application/json", produces = "application/json")
     public ResponseEntity<UserResponse> updateUserByUsername(@PathVariable String username,
                                                              @RequestBody @Valid UpdateUserRequest request) {
         log.info("Updating user by username: {}, {}", username, request);
