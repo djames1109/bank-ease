@@ -47,9 +47,10 @@ public class UserController {
      * @return a {@link ResponseEntity} containing a list of {@link UserResponse} that matches the search criteria
      */
     @GetMapping(produces = "application/json")
-    public ResponseEntity<List<UserResponse>> searchUsers(@RequestParam(value = "search") String search, Pageable pageRequest) {
+    public ResponseEntity<Response<List<UserResponse>>> searchUsers(@RequestParam(value = "search") String search, Pageable pageRequest) {
         log.info("Searching users with search parameters: {}", search);
-        var response = userService.search(search, pageRequest);
+        var body = userService.search(search, pageRequest);
+        var response = GenericResponse.success(body, "US_S002", "Successfully retrieved users.");
         log.info("Search users response: {}", response);
 
         return ResponseEntity.ok(response);

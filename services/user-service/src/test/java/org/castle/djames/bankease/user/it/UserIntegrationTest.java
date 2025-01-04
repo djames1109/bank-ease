@@ -66,7 +66,8 @@ class UserIntegrationTest {
     void testRegisterUser_shouldCreateUserSuccessfully() {
         var request = new RegisterUserRequest("johndoe", "password", "johndoe@domain.com", "John", "Doe", Role.USER);
 
-        var response = testRestTemplate.exchange("/v1/users", HttpMethod.POST, new HttpEntity<>(request), new ParameterizedTypeReference<Response<UserResponse>>() {});
+        var response = testRestTemplate.exchange("/v1/users", HttpMethod.POST, new HttpEntity<>(request), new ParameterizedTypeReference<Response<UserResponse>>() {
+        });
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         var responseWrapper = response.getBody();
@@ -87,10 +88,11 @@ class UserIntegrationTest {
     @Test
     void testRegisterUser_shouldFailToCreateUserWithInvalidData() {
         var request = new RegisterUserRequest("johndoe", "password", "johndoe", "John", "Doe", Role.USER);
-
-        ResponseEntity<UserResponse> response = testRestTemplate.postForEntity("/v1/users", request, UserResponse.class);
+        var response = testRestTemplate.exchange("/v1/users", HttpMethod.POST, new HttpEntity<>(request), new ParameterizedTypeReference<Void>() {
+        });
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        //todo: add more field assertions here.
     }
 
     @Test
@@ -108,6 +110,7 @@ class UserIntegrationTest {
         Assertions.assertThat(response.getBody().getRole()).isEqualTo(Role.USER);
         Assertions.assertThat(response.getBody().isActive()).isTrue();
     }
+    //todo: Add test to get user by user name that is not existing, return 404
 
 
     @Test
@@ -129,6 +132,8 @@ class UserIntegrationTest {
         Assertions.assertThat(response.getBody().getFirst().getRole()).isEqualTo(Role.USER);
         Assertions.assertThat(response.getBody().getFirst().isActive()).isTrue();
     }
+
+    //todo: Add test to search users. if none found, return empty instead of an error
 
     @Test
     void updateUserByUsername_shouldUpdateUserDetailsSuccessfully() {
