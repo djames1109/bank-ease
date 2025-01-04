@@ -3,6 +3,8 @@ package org.castle.djames.bankease.user.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.castle.djames.bankease.common.model.Response;
+import org.castle.djames.bankease.common.util.GenericResponse;
 import org.castle.djames.bankease.user.dto.RegisterUserRequest;
 import org.castle.djames.bankease.user.dto.UpdateUserRequest;
 import org.castle.djames.bankease.user.dto.UserResponse;
@@ -29,9 +31,10 @@ public class UserController {
      * @return a {@link ResponseEntity} containing the {@link UserResponse} with the details of the newly registered user
      */
     @PostMapping
-    public ResponseEntity<UserResponse> registerUser(@RequestBody @Valid RegisterUserRequest request) {
+    public ResponseEntity<Response<UserResponse>> registerUser(@RequestBody @Valid RegisterUserRequest request) {
         log.info("Registering user: {}", request);
-        var response = userService.registerUser(request);
+        var body = userService.registerUser(request);
+        var response = GenericResponse.success(body, "US_S001", "Successfully registered user.");
         log.info("Register user response: {}", response);
 
         return ResponseEntity.ok(response);
