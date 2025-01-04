@@ -81,10 +81,13 @@ public class UserController {
      * @return a {@link ResponseEntity} containing the updated {@link UserResponse} of the user
      */
     @PutMapping(value = "/{username}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<UserResponse> updateUserByUsername(@PathVariable String username,
+    public ResponseEntity<Response<UserResponse>> updateUserByUsername(@PathVariable String username,
                                                              @RequestBody @Valid UpdateUserRequest request) {
         log.info("Updating user by username: {}, {}", username, request);
-        var response = userService.updateUserByUsername(username, request);
+
+        var body = userService.updateUserByUsername(username, request);
+        var response = GenericResponse.success(body, "US_S004", "Successfully updated user.");
+
         log.info("Update user response: {}", response);
 
         return ResponseEntity.ok(response);
@@ -101,7 +104,7 @@ public class UserController {
         log.info("Deleting user by username: {}", username);
 
         userService.deleteUserByUsername(username);
-        var response = GenericResponse.success(null, "US_S004", "Successfully deleted user.");
+        var response = GenericResponse.success(null, "US_S005", "Successfully deleted user.");
 
         log.info("Delete user response: {}", response);
 

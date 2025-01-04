@@ -158,16 +158,27 @@ class UserIntegrationTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         var request = new HttpEntity<>(body, headers);
 
-        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.PUT, request, UserResponse.class);
+        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.PUT, request, new ParameterizedTypeReference<Response<UserResponse>>() {
+        });
+
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(response.getBody()).isNotNull();
-        Assertions.assertThat(response.getBody().getUsername()).isEqualTo("johndoe");
-        Assertions.assertThat(response.getBody().getEmail()).isEqualTo("johndoe2@gmail.com");
-        Assertions.assertThat(response.getBody().getFirstName()).isEqualTo("John");
-        Assertions.assertThat(response.getBody().getLastName()).isEqualTo("Doe");
-        Assertions.assertThat(response.getBody().getRole()).isEqualTo(Role.USER);
-        Assertions.assertThat(response.getBody().isActive()).isTrue();
+
+        var responseWrapper = response.getBody();
+        Assertions.assertThat(responseWrapper).isNotNull();
+        Assertions.assertThat(responseWrapper.getStatus()).isEqualTo(ResponseStatus.SUCCESS);
+        Assertions.assertThat(responseWrapper.getCode()).isEqualTo("US_S004");
+        Assertions.assertThat(responseWrapper.getMessage()).isEqualTo("Successfully updated user.");
+
+        var userResponse = responseWrapper.getBody();
+        Assertions.assertThat(userResponse).isNotNull();
+        Assertions.assertThat(userResponse.getUsername()).isEqualTo("johndoe");
+        Assertions.assertThat(userResponse.getEmail()).isEqualTo("johndoe2@gmail.com");
+        Assertions.assertThat(userResponse.getFirstName()).isEqualTo("John");
+        Assertions.assertThat(userResponse.getLastName()).isEqualTo("Doe");
+        Assertions.assertThat(userResponse.getRole()).isEqualTo(Role.USER);
+        Assertions.assertThat(userResponse.isActive()).isTrue();
 
     }
 
@@ -203,7 +214,7 @@ class UserIntegrationTest {
         var responseWrapper = response.getBody();
         Assertions.assertThat(responseWrapper).isNotNull();
         Assertions.assertThat(responseWrapper.getStatus()).isEqualTo(ResponseStatus.SUCCESS);
-        Assertions.assertThat(responseWrapper.getCode()).isEqualTo("US_S004");
+        Assertions.assertThat(responseWrapper.getCode()).isEqualTo("US_S005");
         Assertions.assertThat(responseWrapper.getMessage()).isEqualTo("Successfully deleted user.");
         Assertions.assertThat(responseWrapper.getBody()).isNull();
 
