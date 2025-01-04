@@ -118,6 +118,21 @@ class UserIntegrationTest {
         Assertions.assertThat(userResponse.getRole()).isEqualTo(Role.USER);
     }
 
+    @Test
+    void testGetUserByUsername_shouldFailToFetchUserDetailsWithInvalidUsername() {
+        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.GET, null, new ParameterizedTypeReference<Response<UserResponse>>() {
+        });
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        var responseWrapper = response.getBody();
+        Assertions.assertThat(responseWrapper).isNotNull();
+        Assertions.assertThat(responseWrapper.getStatus()).isEqualTo(ResponseStatus.ERROR);
+        Assertions.assertThat(responseWrapper.getCode()).isEqualTo("BE_US_E001");
+        Assertions.assertThat(responseWrapper.getMessage()).isEqualTo("User with username 'johndoe' not found");
+        Assertions.assertThat(responseWrapper.getBody()).isNull();
+
+    }
+
     //todo: Add test to get user by user name that is not existing, return 404
 
 
