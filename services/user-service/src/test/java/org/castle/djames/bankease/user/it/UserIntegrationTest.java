@@ -126,19 +126,25 @@ class UserIntegrationTest {
         saveNewUser();
 
         var response = testRestTemplate.exchange("/v1/users?search=username:johndoe",
-                HttpMethod.GET, null, new ParameterizedTypeReference<List<UserResponse>>() {
+                HttpMethod.GET, null, new ParameterizedTypeReference<Response<List<UserResponse>>>() {
                 });
-
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody()).isNotNull();
-        Assertions.assertThat(response.getBody()).isNotEmpty();
-        Assertions.assertThat(response.getBody()).hasSize(1);
-        Assertions.assertThat(response.getBody().getFirst().getUsername()).isEqualTo("johndoe");
-        Assertions.assertThat(response.getBody().getFirst().getEmail()).isEqualTo("johndoe@domain.com");
-        Assertions.assertThat(response.getBody().getFirst().getFirstName()).isEqualTo("John");
-        Assertions.assertThat(response.getBody().getFirst().getLastName()).isEqualTo("Doe");
-        Assertions.assertThat(response.getBody().getFirst().getRole()).isEqualTo(Role.USER);
-        Assertions.assertThat(response.getBody().getFirst().isActive()).isTrue();
+        var responseWrapper = response.getBody();
+        Assertions.assertThat(responseWrapper).isNotNull();
+        Assertions.assertThat(responseWrapper.getStatus()).isEqualTo(ResponseStatus.SUCCESS);
+        Assertions.assertThat(responseWrapper.getCode()).isEqualTo("US_S003");
+        Assertions.assertThat(responseWrapper.getMessage()).isEqualTo("Successfully retrieved users.");
+
+        var users = responseWrapper.getBody();
+        Assertions.assertThat(users).isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+        Assertions.assertThat(users.getFirst().getUsername()).isEqualTo("johndoe");
+        Assertions.assertThat(users.getFirst().getEmail()).isEqualTo("johndoe@domain.com");
+        Assertions.assertThat(users.getFirst().getFirstName()).isEqualTo("John");
+        Assertions.assertThat(users.getFirst().getLastName()).isEqualTo("Doe");
+        Assertions.assertThat(users.getFirst().getRole()).isEqualTo(Role.USER);
+        Assertions.assertThat(users.getFirst().isActive()).isTrue();
     }
 
     //todo: Add test to search users. if none found, return empty instead of an error
@@ -184,13 +190,22 @@ class UserIntegrationTest {
         saveNewUser();
 
 //        verify if user is existing
-        var savedUser = testRestTemplate.getForEntity("/v1/users/johndoe", UserResponse.class);
-        Assertions.assertThat(savedUser.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Assertions.assertThat(savedUser.getBody()).isNotNull();
-        Assertions.assertThat(savedUser.getBody().getUsername()).isEqualTo("johndoe");
+        var verifyUserResponse = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.GET, null, new ParameterizedTypeReference<Response<UserResponse>>() {
+        });
+        Assertions.assertThat(verifyUserResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(verifyUserResponse.getBody()).isNotNull();
+        Assertions.assertThat(verifyUserResponse.getBody().getBody()).isNotNull();
+        Assertions.assertThat(verifyUserResponse.getBody().getBody().getUsername()).isEqualTo("johndoe");
 
-        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.DELETE, null, String.class);
-        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+//        execute delete command
+        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.DELETE, null, new ParameterizedTypeReference<Response<Object>>() {});
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        var responseWrapper = response.getBody();
+        Assertions.assertThat(responseWrapper).isNotNull();
+        Assertions.assertThat(responseWrapper.getStatus()).isEqualTo(ResponseStatus.SUCCESS);
+        Assertions.assertThat(responseWrapper.getCode()).isEqualTo("US_S004");
+        Assertions.assertThat(responseWrapper.getMessage()).isEqualTo("Successfully deleted user.");
+        Assertions.assertThat(responseWrapper.getBody()).isNull();
 
 //        verify if user is deleted
 //        var deletedUser = testRestTemplate.getForEntity("/v1/users/johndoe", UserResponse.class);

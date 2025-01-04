@@ -64,8 +64,10 @@ public class UserController {
     @GetMapping(produces = "application/json")
     public ResponseEntity<Response<List<UserResponse>>> searchUsers(@RequestParam(value = "search") String search, Pageable pageRequest) {
         log.info("Searching users with search parameters: {}", search);
+
         var body = userService.search(search, pageRequest);
         var response = GenericResponse.success(body, "US_S003", "Successfully retrieved users.");
+
         log.info("Search users response: {}", response);
 
         return ResponseEntity.ok(response);
@@ -95,10 +97,15 @@ public class UserController {
      * @return a {@link ResponseEntity} with no content upon successful deletion
      */
     @DeleteMapping("/{username}")
-    public ResponseEntity<Void> deleteUserByUsername(@PathVariable String username) {
+    public ResponseEntity<Response<Object>> deleteUserByUsername(@PathVariable String username) {
         log.info("Deleting user by username: {}", username);
+
         userService.deleteUserByUsername(username);
-        return ResponseEntity.noContent().build();
+        var response = GenericResponse.success(null, "US_S004", "Successfully deleted user.");
+
+        log.info("Delete user response: {}", response);
+
+        return ResponseEntity.ok(response);
     }
 
 }
