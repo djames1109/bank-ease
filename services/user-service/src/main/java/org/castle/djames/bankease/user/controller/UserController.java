@@ -41,6 +41,21 @@ public class UserController {
     }
 
     /**
+     * Retrieves user details by their username.
+     *
+     * @param username the username of the user to be retrieved
+     * @return a ResponseEntity containing the UserResponse of the user if found
+     */
+    @GetMapping(value = "/{username}", produces = "application/json")
+    public ResponseEntity<Response<UserResponse>> getUserByUsername(@PathVariable String username) {
+        log.info("Retrieving user by username: {}", username);
+        var body = userService.getUserByUsername(username);
+        var response = GenericResponse.success(body, "US_S002", "Successfully retrieved user.");
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * Searches for users based on the provided search parameter.
      *
      * @param search the search term used to filter users, such as username, email, or name
@@ -50,22 +65,8 @@ public class UserController {
     public ResponseEntity<Response<List<UserResponse>>> searchUsers(@RequestParam(value = "search") String search, Pageable pageRequest) {
         log.info("Searching users with search parameters: {}", search);
         var body = userService.search(search, pageRequest);
-        var response = GenericResponse.success(body, "US_S002", "Successfully retrieved users.");
+        var response = GenericResponse.success(body, "US_S003", "Successfully retrieved users.");
         log.info("Search users response: {}", response);
-
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * Retrieves user details by their username.
-     *
-     * @param username the username of the user to be retrieved
-     * @return a ResponseEntity containing the UserResponse of the user if found
-     */
-    @GetMapping(value = "/{username}", produces = "application/json")
-    public ResponseEntity<UserResponse> getUserByUsername(@PathVariable String username) {
-        log.info("Retrieving user by username: {}", username);
-        var response = userService.getUserByUsername(username);
 
         return ResponseEntity.ok(response);
     }
