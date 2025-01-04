@@ -2,6 +2,8 @@ package org.castle.djames.bankease.user.it;
 
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.castle.djames.bankease.common.model.Response;
+import org.castle.djames.bankease.common.model.ResponseStatus;
 import org.castle.djames.bankease.user.dto.RegisterUserRequest;
 import org.castle.djames.bankease.user.dto.UpdateUserRequest;
 import org.castle.djames.bankease.user.dto.UserResponse;
@@ -64,10 +66,16 @@ class UserIntegrationTest {
     void testRegisterUser_shouldCreateUserSuccessfully() {
         var request = new RegisterUserRequest("johndoe", "password", "johndoe@domain.com", "John", "Doe", Role.USER);
 
-        ResponseEntity<UserResponse> response = testRestTemplate.postForEntity("/v1/users", request, UserResponse.class);
+        var response = testRestTemplate.exchange("/v1/users", HttpMethod.POST, new HttpEntity<>(request), new ParameterizedTypeReference<Response<UserResponse>>() {});
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        UserResponse userResponse = response.getBody();
+        var responseWrapper = response.getBody();
+        Assertions.assertThat(responseWrapper).isNotNull();
+        Assertions.assertThat(responseWrapper.getStatus()).isEqualTo(ResponseStatus.SUCCESS);
+        Assertions.assertThat(responseWrapper.getCode()).isEqualTo("US_S001");
+        Assertions.assertThat(responseWrapper.getMessage()).isEqualTo("Successfully registered user.");
+
+        UserResponse userResponse = responseWrapper.getBody();
         Assertions.assertThat(userResponse).isNotNull();
         Assertions.assertThat(userResponse.getUsername()).isEqualTo("johndoe");
         Assertions.assertThat(userResponse.getEmail()).isEqualTo("johndoe@domain.com");
