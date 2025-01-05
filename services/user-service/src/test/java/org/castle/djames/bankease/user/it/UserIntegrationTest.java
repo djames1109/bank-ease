@@ -240,8 +240,13 @@ class UserIntegrationTest {
         Assertions.assertThat(responseWrapper.getBody()).isNull();
 
 //        verify if user is deleted
-//        var deletedUser = testRestTemplate.getForEntity("/v1/users/johndoe", UserResponse.class);
-//        Assertions.assertThat(deletedUser.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        var deletedUserResponse = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.GET, null, new ParameterizedTypeReference<Response<Object>>() {});
+        Assertions.assertThat(deletedUserResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        Assertions.assertThat(deletedUserResponse.getBody()).isNotNull();
+        Assertions.assertThat(deletedUserResponse.getBody().getStatus()).isEqualTo(ResponseStatus.ERROR);
+        Assertions.assertThat(deletedUserResponse.getBody().getCode()).isEqualTo("BE_US_E001");
+        Assertions.assertThat(deletedUserResponse.getBody().getMessage()).isEqualTo("User with username 'johndoe' not found");
+        Assertions.assertThat(deletedUserResponse.getBody().getBody()).isNull();
     }
 
     private User saveNewUser() {
