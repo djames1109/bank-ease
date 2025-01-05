@@ -3,7 +3,6 @@ package org.castle.djames.bankease.common.model;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -14,23 +13,6 @@ public class Response<T> {
     private String code;
     private String message;
     private T body;
-    private List<ErrorDetail> errorDetails;
+    private List<String> errorDetails;
 
-    public Response<T> addError(ErrorDetail errorDetail) {
-        if (this.errorDetails == null) {
-            this.errorDetails = new ArrayList<>();
-        }
-
-        this.errorDetails.add(errorDetail);
-        return this;
-    }
-
-    public Response<T> addError(String code, String message) {
-        if (this.errorDetails == null) {
-            this.errorDetails = new ArrayList<>();
-        }
-
-        this.errorDetails.add(new ErrorDetail(code, message));
-        return this;
-    }
 }

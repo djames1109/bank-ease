@@ -10,6 +10,7 @@ import org.castle.djames.bankease.user.dto.UserResponse;
 import org.castle.djames.bankease.user.entity.Role;
 import org.castle.djames.bankease.user.entity.User;
 import org.castle.djames.bankease.user.repository.UserRepository;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -88,11 +89,18 @@ class UserIntegrationTest {
     @Test
     void testRegisterUser_shouldFailToCreateUserWithInvalidData() {
         var request = new RegisterUserRequest("johndoe", "password", "johndoe", "John", "Doe", Role.USER);
-        var response = testRestTemplate.exchange("/v1/users", HttpMethod.POST, new HttpEntity<>(request), new ParameterizedTypeReference<Void>() {
-        });
+        var response = testRestTemplate.exchange("/v1/users",
+                HttpMethod.POST, new HttpEntity<>(request), new ParameterizedTypeReference<Response<Object>>() {
+                });
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        //todo: add more field assertions here.
+        var responseWrapper = response.getBody();
+        Assertions.assertThat(responseWrapper).isNotNull();
+        Assertions.assertThat(responseWrapper.getStatus()).isEqualTo(ResponseStatus.ERROR);
+        Assertions.assertThat(responseWrapper.getCode()).isEqualTo("BE_US_VE001");
+        Assertions.assertThat(responseWrapper.getMessage()).isEqualTo("Error encountered while validating request.");
+        Assertions.assertThat(responseWrapper.getBody()).isNull();
+        Assertions.assertThat(responseWrapper.getErrorDetails()).isNotNull().isNotEmpty();
     }
 
     @Test
@@ -132,9 +140,6 @@ class UserIntegrationTest {
         Assertions.assertThat(responseWrapper.getBody()).isNull();
 
     }
-
-    //todo: Add test to get user by user name that is not existing, return 404
-
 
     @Test
     void testSearchUsers_shouldFetchUserDetailsSuccessfully() {
@@ -224,7 +229,8 @@ class UserIntegrationTest {
         Assertions.assertThat(verifyUserResponse.getBody().getBody().getUsername()).isEqualTo("johndoe");
 
 //        execute delete command
-        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.DELETE, null, new ParameterizedTypeReference<Response<Object>>() {});
+        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.DELETE, null, new ParameterizedTypeReference<Response<Object>>() {
+        });
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         var responseWrapper = response.getBody();
         Assertions.assertThat(responseWrapper).isNotNull();
