@@ -10,7 +10,6 @@ import org.castle.djames.bankease.user.dto.UserResponse;
 import org.castle.djames.bankease.user.entity.Role;
 import org.castle.djames.bankease.user.entity.User;
 import org.castle.djames.bankease.user.repository.UserRepository;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -240,7 +239,8 @@ class UserIntegrationTest {
         Assertions.assertThat(responseWrapper.getBody()).isNull();
 
 //        verify if user is deleted
-        var deletedUserResponse = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.GET, null, new ParameterizedTypeReference<Response<Object>>() {});
+        var deletedUserResponse = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.GET, null, new ParameterizedTypeReference<Response<Object>>() {
+        });
         Assertions.assertThat(deletedUserResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         Assertions.assertThat(deletedUserResponse.getBody()).isNotNull();
         Assertions.assertThat(deletedUserResponse.getBody().getStatus()).isEqualTo(ResponseStatus.ERROR);
