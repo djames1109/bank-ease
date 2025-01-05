@@ -58,18 +58,8 @@ public class UserServiceExceptionHandler {
     }
 
     private String lookup(FieldError error) {
-        if (Objects.isNull(error.getCodes()) || error.getCodes().length == 0)
-            return null;
-
         String constraint = error.getCodes()[error.getCodes().length - 1];
         String[] split = error.getField().split("\\.");
-        String field = split[split.length - 1];
-        return String.format("%s.%s", constraint, field);
-    }
-
-    private String lookup(ObjectError error) {
-        String constraint = error.getCodes()[error.getCodes().length - 1];
-        String[] split = error.getObjectName().split("\\.");
         String field = split[split.length - 1];
         return String.format("%s.%s", constraint, field);
     }
