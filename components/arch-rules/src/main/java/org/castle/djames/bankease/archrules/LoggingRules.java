@@ -7,20 +7,14 @@ import com.tngtech.archunit.library.GeneralCodingRules;
 public class LoggingRules {
 
     /**
-     * Rule to ensure that no classes access standard streams such as System.out or System.err.
-     * This rule is defined to enforce proper logging practices and prevent usage of standard streams
-     * for output or error logging, encouraging the use of dedicated logging frameworks instead.
-     * It utilizes ArchUnit's GeneralCodingRules to enforce this restriction across the codebase.
+     * Ensures no classes use System.out or System.err to promote proper logging practices.
      */
     @ArchTest
     public ArchRule noAccessToStandardStreams = GeneralCodingRules.NO_CLASSES_SHOULD_ACCESS_STANDARD_STREAMS;
 
 
     /**
-     * Rule to ensure that no classes in the codebase use the java.util.logging framework.
-     * This rule is defined to enforce the adoption of a consistent logging framework throughout the project,
-     * thereby promoting better maintainability and configurability of logging.
-     * It utilizes ArchUnit's GeneralCodingRules to check for violations of this guideline.
+     * Ensures no classes use java.util.logging to enforce consistent logging.
      */
     @ArchTest
     public ArchRule noAccessToJavaUtilLogging = GeneralCodingRules.NO_CLASSES_SHOULD_USE_JAVA_UTIL_LOGGING;

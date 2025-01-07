@@ -14,4 +14,7 @@ public class DefaultRules {
     @ArchTest
     public ArchTests allCyclicDependencyRules = ArchTests.in(CyclicDependencyRules.class);
 
+    @ArchTest
+    public ArchTests allTransactionalRules = ArchTests.in(TransactionalRules.class);
+    
 }
