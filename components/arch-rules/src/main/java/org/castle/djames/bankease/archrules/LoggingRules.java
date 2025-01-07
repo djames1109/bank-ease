@@ -1,10 +1,10 @@
-package org.castle.djames.bankease.archrules.logging;
+package org.castle.djames.bankease.archrules;
 
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.library.GeneralCodingRules;
 
-public class LoggingRulesTest {
+public class LoggingRules {
 
     /**
      * Rule to ensure that no classes access standard streams such as System.out or System.err.
@@ -13,7 +13,7 @@ public class LoggingRulesTest {
      * It utilizes ArchUnit's GeneralCodingRules to enforce this restriction across the codebase.
      */
     @ArchTest
-    ArchRule noAccessToStandardStreams = GeneralCodingRules.NO_CLASSES_SHOULD_ACCESS_STANDARD_STREAMS;
+    public ArchRule noAccessToStandardStreams = GeneralCodingRules.NO_CLASSES_SHOULD_ACCESS_STANDARD_STREAMS;
 
 
     /**
@@ -23,6 +23,6 @@ public class LoggingRulesTest {
      * It utilizes ArchUnit's GeneralCodingRules to check for violations of this guideline.
      */
     @ArchTest
-    ArchRule noAccessToJavaUtilLogging = GeneralCodingRules.NO_CLASSES_SHOULD_USE_JAVA_UTIL_LOGGING;
+    public ArchRule noAccessToJavaUtilLogging = GeneralCodingRules.NO_CLASSES_SHOULD_USE_JAVA_UTIL_LOGGING;
 
 }
