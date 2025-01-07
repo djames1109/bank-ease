@@ -1,18 +1,14 @@
 package org.castle.djames.bankease.user.archunit;
 
+import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
-import com.tngtech.archunit.lang.ArchRule;
-import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
-import org.springframework.web.bind.annotation.RestController;
+import com.tngtech.archunit.junit.ArchTests;
+import org.castle.djames.bankease.archrules.logging.LoggingRulesTest;
 
-@AnalyzeClasses(packages = "org.castle.djames.bankease.user")
+@AnalyzeClasses(packages = "org.castle.djames.bankease.user", importOptions = ImportOption.DoNotIncludeTests.class)
 public class ArchitectureTest {
 
     @ArchTest
-    ArchRule controller_naming_convention = ArchRuleDefinition.classes()
-            .that().areAnnotatedWith(RestController.class)
-            .should().haveSimpleNameEndingWith("Controller");
-
-
+    public static final ArchTests allLoggingRules = ArchTests.in(LoggingRulesTest.class);
 }
