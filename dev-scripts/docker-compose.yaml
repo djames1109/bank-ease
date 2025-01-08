@@ -13,6 +13,7 @@ services:
       - postgres
     restart: unless-stopped
   sonarqube:
+    container_name: sonarqube
     image: sonarqube:lts-community
     depends_on:
       - sonar_db
@@ -30,6 +31,7 @@ services:
       - sonarqube_temp:/opt/sonarqube/temp
 
   sonar_db:
+    container_name: sonaqube-db
     image: postgres:alpine3.19
     environment:
       POSTGRES_USER: sonar
