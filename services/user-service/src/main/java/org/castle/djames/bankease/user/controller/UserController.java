@@ -82,7 +82,7 @@ public class UserController {
      */
     @PutMapping(value = "/{username}", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Response<UserResponse>> updateUserByUsername(@PathVariable String username,
-                                                             @RequestBody @Valid UpdateUserRequest request) {
+                                                                       @RequestBody @Valid UpdateUserRequest request) {
         log.info("Updating user by username: {}, {}", username, request);
 
         var body = userService.updateUserByUsername(username, request);
