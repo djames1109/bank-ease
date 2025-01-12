@@ -27,10 +27,9 @@ public class CyclicDependencyRules {
         return new SliceAssignment() {
             @Override
             public SliceIdentifier getIdentifierOf(JavaClass javaClass) {
-                if (javaClass.getPackageName().contains(".service"))
-                    return SliceIdentifier.of(javaClass.getName());
-                else
-                    return SliceIdentifier.ignore();
+                return (javaClass.getPackageName().contains(".service"))
+                        ? SliceIdentifier.of(javaClass.getPackageName())
+                        : SliceIdentifier.ignore();
             }
 
             @Override
