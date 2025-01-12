@@ -1,26 +1,43 @@
 package org.castle.djames.bankease.archrules;
 
+import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import com.tngtech.archunit.library.dependencies.SliceAssignment;
+import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
 public class CyclicDependencyRules {
 
     /**
-     * Ensures no cyclic dependencies exist between classes in the service layer.
-     * <p>
-     * This rule enforces a modular architecture by detecting circular relationships among classes matching
-     * the pattern "..service.(*)..".
-     * <p>
-     * Note: This only works if the classes are in different packages: `..service.order.Order` and `..service.payment.Payment`
-     * todo: check how to prevent cyclic dependency violation between classes on the same package
+     * Verifies the absence of circular dependencies among classes within the service layer.
      */
     @ArchTest
-    public ArchRule noCyclesBetweenServiceClasses = slices().matching("..(service).(*)..")
-            .namingSlices("$2 of $1")
+    public ArchRule noCyclesBetweenServiceClasses = slices().assignedFrom(getClassesFromServicePackage())
             .should()
             .beFreeOfCycles()
             .allowEmptyShould(true);
 
+
+    /**
+     * Divides classes from the service package into separate slices.
+     */
+    private SliceAssignment getClassesFromServicePackage() {
+        return new SliceAssignment() {
+            @Override
+            public SliceIdentifier getIdentifierOf(JavaClass javaClass) {
+                if (javaClass.getPackageName().contains(".service"))
+                    return SliceIdentifier.of(javaClass.getName());
+                else
+                    return SliceIdentifier.ignore();
+            }
+
+            @Override
+            public String getDescription() {
+                return "classes directly from service package";
+            }
+        };
+
+    }
 }
