@@ -2,8 +2,15 @@ allprojects {
     repositories {
         mavenCentral()
     }
+    
+    
 }
 
 subprojects {
-    
+    if (project.name == 'arch-rules' ||
+            project.name == 'common') {
+        apply plugin: 'java-library'
+    } else if (project.name == 'user-service') {
+        apply plugin: 'java'
+    }
 }
