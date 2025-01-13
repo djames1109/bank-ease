@@ -12,10 +12,6 @@ configurations {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation project(':components:common')
     testImplementation project(':components:arch-rules')
