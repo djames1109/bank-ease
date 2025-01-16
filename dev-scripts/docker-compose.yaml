@@ -45,6 +45,7 @@ networks:
   postgres:
     driver: bridge
 
+
 volumes:
   postgres:
   sonarqube_conf:
