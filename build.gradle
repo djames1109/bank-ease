@@ -4,6 +4,7 @@ allprojects {
     }
 }
 
+
 subprojects {
     if (project.name == 'arch-rules' ||
             project.name == 'common') {
