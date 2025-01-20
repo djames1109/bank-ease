@@ -1,4 +1,3 @@
-
 dependencies {
     api 'com.tngtech.archunit:archunit-junit5:1.3.0'
     implementation 'org.springframework:spring-tx:6.1.4'
