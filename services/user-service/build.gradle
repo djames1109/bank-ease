@@ -17,7 +17,7 @@ configurations {
 
 dependencies {
     implementation project(':components:common')
-    testImplementation project(':components:arch-rules')
+    testImplementation 'org.castle.djames:arch-rules:1.0.0-SNAPSHOT'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
