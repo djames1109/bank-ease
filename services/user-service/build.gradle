@@ -3,11 +3,15 @@ plugins {
     id 'org.sonarqube' version '3.5.0.2730'
     id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.castle.djames.bankease.arch-rules-enforcer' version '1.0.0-SNAPSHOT'
 }
 
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
+    }
+    configureEach {
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
     }
 }
 
