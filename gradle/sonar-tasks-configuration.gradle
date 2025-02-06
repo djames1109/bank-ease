@@ -1,0 +1,13 @@
+// SonarQube Configuration
+sonarqube {
+    properties {
+        property "sonar.projectKey", "$sonarProjectKey"
+        property "sonar.organization", "$sonarProjectName"
+        property "sonar.host.url", "$sonarHostUrl"
+        property "sonar.login", "$sonarLogin"
+
+
+        property('sonar.coverage.jacoco.xmlReportPaths', layout.buildDirectory.file("reports/jacoco/jacocoRootReport.xml").get().asFile)
+        property('sonar.exclusions', '**/arch-rules/**')
+    }
+}

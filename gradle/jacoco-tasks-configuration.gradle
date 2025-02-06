@@ -1,0 +1,29 @@
+// JaCoCo Aggregation (Root-Level Task)
+def projectsToInclude = subprojects.findAll { project -> project.path != ':components:arch-rules' }
+
+tasks.register('jacocoRootReport', JacocoReport) {
+    dependsOn projectsToInclude*.test
+
+    additionalSourceDirs.setFrom(files(projectsToInclude.collect { it.sourceSets.main.allSource.srcDirs }))
+    sourceDirectories.setFrom(files(projectsToInclude.collect { it.sourceSets.main.allSource.srcDirs }))
+    classDirectories.setFrom(files(projectsToInclude.collect {
+        it.sourceSets.main.output.asFileTree.matching {
+            exclude '**/generated/**' // Exclude generated code if needed
+        }
+    }))
+
+    // Fix: Collect execution data files properly
+    def execDataFiles = files(projectsToInclude.collectMany { project ->
+        project.tasks.withType(Test).collect { task ->
+            task.extensions.findByType(JacocoTaskExtension)?.destinationFile
+        }
+    }.findAll { it?.exists() }) // Ensure only existing files are included
+
+    executionData.setFrom(execDataFiles)
+
+    reports {
+        xml.required = true
+        xml.outputLocation = layout.buildDirectory.file("reports/jacoco/jacocoRootReport.xml")
+        html.required = true
+    }
+}
