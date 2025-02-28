@@ -37,7 +37,7 @@ class UserIntegrationTest {
     @ServiceConnection(name = "postgres")
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:alpine3.19")
             .withStartupTimeout(Duration.ofSeconds(90))
-            .withInitScript("init.sql");
+            .withInitScript("init-test.sql");
 
     @Autowired
     private TestRestTemplate testRestTemplate;
