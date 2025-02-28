@@ -34,6 +34,7 @@ class UserServiceTest {
 
     @BeforeEach
     public void setUp() {
+        passwordEncoder = new BCryptPasswordEncoder(16);
         userService = new UserService(userRepository);
     }
 
