@@ -13,6 +13,10 @@ spring:
         default_schema: bank_ease_schema
     hibernate:
       ddl-auto: none
+  security:
+    user:
+      name: admin
+      password: <PASSWORD_PLACEHOLDER>
 
 server:
   port: 8080

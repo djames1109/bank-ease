@@ -21,6 +21,7 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -65,9 +66,11 @@ class UserIntegrationTest {
     @Test
     void testRegisterUser_shouldCreateUserSuccessfully() {
         var request = new RegisterUserRequest("johndoe", "password", "johndoe@domain.com", "John", "Doe", Role.USER);
-
-        var response = testRestTemplate.exchange("/v1/users", HttpMethod.POST, new HttpEntity<>(request), new ParameterizedTypeReference<Response<UserResponse>>() {
-        });
+        var response = testRestTemplate.exchange("/v1/users",
+                HttpMethod.POST,
+                new HttpEntity<>(request, buildDefaultHeaders()),
+                new ParameterizedTypeReference<Response<UserResponse>>() {
+                });
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         var responseWrapper = response.getBody();
@@ -89,7 +92,9 @@ class UserIntegrationTest {
     void testRegisterUser_shouldFailToCreateUserWithInvalidData() {
         var request = new RegisterUserRequest("johndoe", "password", "johndoe", "John", "Doe", Role.USER);
         var response = testRestTemplate.exchange("/v1/users",
-                HttpMethod.POST, new HttpEntity<>(request), new ParameterizedTypeReference<Response<Object>>() {
+                HttpMethod.POST,
+                new HttpEntity<>(request, buildDefaultHeaders()),
+                new ParameterizedTypeReference<Response<Object>>() {
                 });
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -102,12 +107,16 @@ class UserIntegrationTest {
         Assertions.assertThat(responseWrapper.getErrorDetails()).isNotNull().isNotEmpty();
     }
 
+    @WithMockUser(username = "admin")
     @Test
     void testGetUserByUsername_shouldFetchUserDetailsSuccessfully() {
         saveNewUser();
 
-        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.GET, null, new ParameterizedTypeReference<Response<UserResponse>>() {
-        });
+        var response = testRestTemplate.exchange("/v1/users/johndoe",
+                HttpMethod.GET,
+                new HttpEntity<>(buildDefaultHeaders()),
+                new ParameterizedTypeReference<Response<UserResponse>>() {
+                });
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         var responseWrapper = response.getBody();
@@ -127,8 +136,11 @@ class UserIntegrationTest {
 
     @Test
     void testGetUserByUsername_shouldFailToFetchUserDetailsWithInvalidUsername() {
-        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.GET, null, new ParameterizedTypeReference<Response<UserResponse>>() {
-        });
+        var response = testRestTemplate.exchange("/v1/users/johndoe",
+                HttpMethod.GET,
+                new HttpEntity<>(buildDefaultHeaders()),
+                new ParameterizedTypeReference<Response<UserResponse>>() {
+                });
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         var responseWrapper = response.getBody();
@@ -145,7 +157,9 @@ class UserIntegrationTest {
         saveNewUser();
 
         var response = testRestTemplate.exchange("/v1/users?search=username:johndoe",
-                HttpMethod.GET, null, new ParameterizedTypeReference<Response<List<UserResponse>>>() {
+                HttpMethod.GET,
+                new HttpEntity<>(buildDefaultHeaders()),
+                new ParameterizedTypeReference<Response<List<UserResponse>>>() {
                 });
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         var responseWrapper = response.getBody();
@@ -173,7 +187,7 @@ class UserIntegrationTest {
         saveNewUser();
 
         var body = new UpdateUserRequest(null, "johndoe2@gmail.com", null, null, null, null);
-        var headers = new HttpHeaders();
+        var headers = buildDefaultHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         var request = new HttpEntity<>(body, headers);
 
@@ -206,7 +220,7 @@ class UserIntegrationTest {
         saveNewUser();
 
         var body = new UpdateUserRequest(null, "testEmail", null, null, null, null);
-        var headers = new HttpHeaders();
+        var headers = buildDefaultHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         var request = new HttpEntity<>(body, headers);
 
@@ -220,16 +234,22 @@ class UserIntegrationTest {
         saveNewUser();
 
 //        verify if user is existing
-        var verifyUserResponse = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.GET, null, new ParameterizedTypeReference<Response<UserResponse>>() {
-        });
+        var verifyUserResponse = testRestTemplate.exchange("/v1/users/johndoe",
+                HttpMethod.GET,
+                new HttpEntity<>(buildDefaultHeaders()),
+                new ParameterizedTypeReference<Response<UserResponse>>() {
+                });
         Assertions.assertThat(verifyUserResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(verifyUserResponse.getBody()).isNotNull();
         Assertions.assertThat(verifyUserResponse.getBody().getBody()).isNotNull();
         Assertions.assertThat(verifyUserResponse.getBody().getBody().getUsername()).isEqualTo("johndoe");
 
 //        execute delete command
-        var response = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.DELETE, null, new ParameterizedTypeReference<Response<Object>>() {
-        });
+        var response = testRestTemplate.exchange("/v1/users/johndoe",
+                HttpMethod.DELETE,
+                new HttpEntity<>(buildDefaultHeaders()),
+                new ParameterizedTypeReference<Response<Object>>() {
+                });
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         var responseWrapper = response.getBody();
         Assertions.assertThat(responseWrapper).isNotNull();
@@ -239,8 +259,11 @@ class UserIntegrationTest {
         Assertions.assertThat(responseWrapper.getBody()).isNull();
 
 //        verify if user is deleted
-        var deletedUserResponse = testRestTemplate.exchange("/v1/users/johndoe", HttpMethod.GET, null, new ParameterizedTypeReference<Response<Object>>() {
-        });
+        var deletedUserResponse = testRestTemplate.exchange("/v1/users/johndoe",
+                HttpMethod.GET,
+                new HttpEntity<>(buildDefaultHeaders()),
+                new ParameterizedTypeReference<Response<Object>>() {
+                });
         Assertions.assertThat(deletedUserResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         Assertions.assertThat(deletedUserResponse.getBody()).isNotNull();
         Assertions.assertThat(deletedUserResponse.getBody().getStatus()).isEqualTo(ResponseStatus.ERROR);
@@ -249,9 +272,9 @@ class UserIntegrationTest {
         Assertions.assertThat(deletedUserResponse.getBody().getBody()).isNull();
     }
 
-    private User saveNewUser() {
+    private void saveNewUser() {
         var user = buildUser();
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     private User buildUser() {
@@ -266,5 +289,10 @@ class UserIntegrationTest {
                 .build();
     }
 
+    private HttpHeaders buildDefaultHeaders() {
+        var headers = new HttpHeaders();
+        headers.setBasicAuth("admin", "password");
+        return headers;
+    }
 
 }

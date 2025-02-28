@@ -24,12 +24,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository) {
+       this.userRepository = userRepository;
+       this.passwordEncoder = new BCryptPasswordEncoder(16);
+    }
 
     public UserResponse registerUser(RegisterUserRequest request) {
         var user = buildUser(request);
