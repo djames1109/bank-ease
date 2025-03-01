@@ -33,8 +33,10 @@ public class UserController {
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<Response<UserResponse>> registerUser(@RequestBody @Valid RegisterUserRequest request) {
         log.info("Registering user: {}", request);
+
         var body = userService.registerUser(request);
         var response = GenericResponse.success(body, "US_S001", "Successfully registered user.");
+
         log.info("Register user response: {}", response);
 
         return ResponseEntity.ok(response);
@@ -49,6 +51,7 @@ public class UserController {
     @GetMapping(value = "/{username}", produces = "application/json")
     public ResponseEntity<Response<UserResponse>> getUserByUsername(@PathVariable String username) {
         log.info("Retrieving user by username: {}", username);
+
         var body = userService.getUserByUsername(username);
         var response = GenericResponse.success(body, "US_S002", "Successfully retrieved user.");
 

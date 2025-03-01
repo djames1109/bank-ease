@@ -23,8 +23,6 @@ dependencies {
 
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
 
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
