@@ -8,5 +8,6 @@ pluginManagement {
 rootProject.name = 'bank-ease'
 
 include 'services:user-service'
+include 'services:auth-service'
 include 'components:common'
 include 'components:arch-rules'
