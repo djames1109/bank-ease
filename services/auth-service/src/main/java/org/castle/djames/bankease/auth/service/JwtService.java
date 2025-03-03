@@ -1,9 +1,9 @@
-package org.castle.djames.bankease.user.service.auth;
+package org.castle.djames.bankease.auth.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.castle.djames.bankease.user.entity.User;
+import org.castle.djames.bankease.persistence.entity.User;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
